@@ -1,21 +1,21 @@
-// store url for api endpoint
+// URL for api
 var url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
 
-// perform GET request to the query url
+// perform GET request
 d3.json(url, function(data) {
   // send data.features object to the createFeatures function
   createFeatures(data.features);
 });
 
 function createFeatures(earthquakeData) {
-  // function which runs for each feature in the features array
-  // gives each feature a popup describing the location and magnitude
+  // function for each feature
+  // popups of location and magnitude
   function onEachFeature(feature, layer) {
     layer.bindPopup("<h2><center> Location <br></h2>" + feature.properties.place +
     "<hr><center><h2>Magnitude<br></h2>"+feature.properties.mag);
   }
 
-  // color selector based on magnitude
+  // color based on magnitude
   function chooseColor(feature) {
     if (feature.properties.mag > 5.000) {
         return {color: "red", fillColor: "red", fillOpacity: .7, stroke: true,
@@ -46,13 +46,13 @@ function createFeatures(earthquakeData) {
     }
   };
 
-  // create geoJSON layer containing features array on the earthquakeData object
+  // create geoJSON layer
   var earthquakes = L.geoJSON(earthquakeData, {
     // change color of points depending on magnitude
     style: chooseColor,
-    // run the onEachFeature function for each piece of data in the array
+    // run onEachFeature function
     onEachFeature: onEachFeature,
-    // create circles and resize them
+    // create circle markers
     pointToLayer: function (feature, latlng) {
       return L.circleMarker(latlng, 
         {
@@ -61,7 +61,7 @@ function createFeatures(earthquakeData) {
     }
   });
 
-  // send the earthquake layer to the createMap function
+  // send earthquake layer to createMap
   createMap(earthquakes);
 }
 
@@ -81,18 +81,18 @@ function createMap(earthquakes) {
   accessToken: API_KEY
   });
 
-  // define a baseMaps object to hold our base layers
+  // create object for base layers
   var baseMaps = {
     "Street Map": streetmap,
     "Light Map": lightmap
   };
 
-  // create overlay object to hold our overlay layer 
+  // create object for overlay layer 
   var overlayMaps = {
     Earthquakes: earthquakes
   };
 
-  // create our map, giving it the streetmap and earthquak layers
+  // create map, with streetmap and earthquake layers
   var myMap = L.map("map", {
     center: [
       37.09, -95.71
@@ -101,8 +101,8 @@ function createMap(earthquakes) {
     layers: [lightmap, earthquakes]
   });
 
-  // create a layer control and pass in our baseMaps and overlayMaps
-  // add the layer control to the map
+  // create layer control and pass in baseMaps and overlayMaps
+  // add layer control to map
   L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
   }).addTo(myMap);
